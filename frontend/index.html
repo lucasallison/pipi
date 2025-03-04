@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pi digits! (in hex)</title>
+  </head>
+<body>
+    <label for="input">Digit to calculate:</label>
+    <input type="text" id="input" />
+    <button id="submit">Submit</button>
+    <script type="module">
+    import init, { bbp } from "./pihex/pkg/pihex.js";
+    init().then(() => {
+        document.getElementById('submit').addEventListener('click', () => {
+            const input = document.getElementById('input').value;
+            const number = parseInt(input, 10);
+            if (isNaN(number) || number < 0) {
+                alert('Please enter a valid positive integer.');
+            } else {
+                const result = bbp(number);
+                alert(result);
+            }
+        });
+    });
+    </script>
+</body>
+</html>
