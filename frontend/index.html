@@ -1,27 +1,131 @@
-<!doctype html>
-<html lang="en-US">
-  <head>
-    <meta charset="utf-8" />
-    <title>Pi digits! (in hex)</title>
-  </head>
-<body>
-    <label for="input">Digit to calculate:</label>
-    <input type="text" id="input" />
-    <button id="submit">Submit</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Digits! (In Hex)</title>
+    <link rel="icon" type="image/png" href="./images/pi_favicon_white.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div id="app" class="bg-white shadow-lg rounded-lg p-8 w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl">
+        <h1 class="text-3xl font-bold mb-2 text-center text-gray-1000">Digits of Pi</h1>
+        <h2 class="text-md text-center text-gray-500 mb-4">Compute hexadecimal digits of π using the BBP or Bellards formula</h2>
+        
+        <div class="mb-4 flex flex-col sm:flex-row sm:items-center">
+            <label for="digitsToCompute" class="text-gray-700 font-medium mb-2 sm:mb-0 sm:w-40 sm:text-right sm:mr-4 whitespace-nowrap">
+                Digits to Compute:
+            </label>
+            <input 
+                type="number" 
+                id="digitsToCompute" 
+                v-model.number="digitsToCompute" 
+                min="1" 
+                class="w-full sm:flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+        </div>
+        
+        <div class="flex gap-2">
+            <button 
+            @click="computePiDigits" 
+            :disabled="!digitsToCompute || computing"
+            class="flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400 transition duration-300"
+            >
+            {{ computing ? 'Computing...' : 'Compute' }}
+            </button>
+            <button 
+            v-if="computing && digitsToCompute > piDigits.length"
+            @click="computing = false"
+            class="w-24 bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-300"
+            >
+            Stop
+            </button>
+        </div>
+
+        <div v-if="computing && digitsToCompute > 1" class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div 
+                    class="bg-blue-600 h-4 rounded-full transition-all duration-500 ease-in-out" 
+                    :style="{ width: `${progressPercentage}%` }"
+                ></div>
+            </div>
+            <div class="text-center text-sm text-gray-600 mt-2">
+                Computed: {{ currentProgress }} / {{ digitsToCompute }} digits
+            </div>
+        </div>
+
+        <div v-if="piDigits.length" class="mt-6">
+            <h2 class="text-xl font-semibold mb-2 text-gray-700">Computed Digits:</h2>
+            <div class="bg-gray-50 p-4 rounded-md max-h-64 overflow-y-auto">
+                <p class="font-mono text-sm break-all">
+                    3.{{ piDigits.join('') }}
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
     import init, { bbp } from "./pihex/pkg/pihex.js";
-    init().then(() => {
-        document.getElementById('submit').addEventListener('click', () => {
-            const input = document.getElementById('input').value;
-            const number = parseInt(input, 10);
-            if (isNaN(number) || number < 0) {
-                alert('Please enter a valid positive integer.');
-            } else {
-                const result = bbp(number);
-                alert(result);
+
+    const { createApp, ref, computed } = Vue;
+
+    createApp({
+        setup() {
+            const digitsToCompute = ref(10);
+            const piDigits = ref([]);
+            const computing = ref(false);
+            const currentProgress = ref(0);
+
+            const progressPercentage = computed(() => {
+                return computing.value
+                    ? Math.round((currentProgress.value / digitsToCompute.value) * 100) 
+                    : 0;
+            });
+
+            async function computePiDigits() {
+                // Ensure Wasm module is initialized
+                await init();
+
+                computing.value = true;
+                currentProgress.value = 0;
+
+                const start = piDigits.value.length;
+                const end = piDigits.value.length + digitsToCompute.value;
+
+                try {
+                    // Compute digits sequentially with progress tracking
+                    for (let i = start; i < end; i++) {
+                        if (!computing.value) {
+                            break;
+                        }
+
+                        const digit = bbp(i);
+                        piDigits.value.push(digit);
+                        
+                        currentProgress.value += 1;
+
+                        // Ensure progress is visible by adding a small delay
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                } catch (error) {
+                    console.error('Error computing Pi digits:', error);
+                    alert('Failed to compute Pi digits');
+                } finally {
+                    computing.value = false;
+                }
             }
-        });
-    });
+
+            return {
+                digitsToCompute,
+                piDigits,
+                computing,
+                currentProgress,
+                progressPercentage,
+                computePiDigits
+            };
+        }
+    }).mount('#app');
     </script>
 </body>
 </html>
