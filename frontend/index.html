@@ -22,8 +22,22 @@
                 id="digitsToCompute" 
                 v-model.number="digitsToCompute" 
                 min="1" 
-                class="w-full sm:flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full sm:w-auto sm:flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+        </div>
+
+        <div class="mb-4 flex flex-col sm:flex-row sm:items-center">
+            <label for="algorithm" class="text-gray-700 font-medium mb-2 sm:mb-0 sm:w-40 sm:text-right sm:mr-4 whitespace-nowrap">
+            Algorithm:
+            </label>
+            <select 
+            id="algorithm" 
+            v-model="selectedAlgorithm" 
+            class="w-full sm:w-auto sm:flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <option value="bbp">BBP Formula</option>
+            <option value="bellard">Bellard's Formula</option>
+            </select>
         </div>
         
         <div class="flex gap-2">
@@ -35,7 +49,7 @@
             {{ computing ? 'Computing...' : 'Compute' }}
             </button>
             <button 
-            v-if="computing && digitsToCompute > piDigits.length"
+            v-if="computing && digitsToCompute > 1"
             @click="computing = false"
             class="w-24 bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-300"
             >
@@ -72,10 +86,11 @@
 
     createApp({
         setup() {
-            const digitsToCompute = ref(10);
+            const digitsToCompute = ref(100);
             const piDigits = ref([]);
             const computing = ref(false);
             const currentProgress = ref(0);
+            const selectedAlgorithm = ref('bbp')
 
             const progressPercentage = computed(() => {
                 return computing.value
@@ -122,6 +137,7 @@
                 computing,
                 currentProgress,
                 progressPercentage,
+                selectedAlgorithm,
                 computePiDigits
             };
         }
