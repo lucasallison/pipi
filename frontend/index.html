@@ -7,96 +7,181 @@
     <link rel="icon" type="image/png" href="./images/pi_favicon_white.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div id="app" class="bg-white shadow-lg rounded-lg p-8 w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl">
-        <h1 class="text-3xl font-bold mb-2 text-center text-gray-1000">Digits of Pi</h1>
-        <h2 class="text-md text-center text-gray-500 mb-4">Compute hexadecimal digits of π using the BBP or Bellards formula</h2>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="bg-white shadow-xl rounded-xl p-8 w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl border border-gray-200">
+        <div class="flex items-center justify-center mb-6">
+            <div class="bg-blue-600 rounded-full p-3 mr-3">
+                <i class="fas fa-pi text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Digits of Pi</h1>
+                <h2 class="text-md text-gray-500">Hexadecimal Computation</h2>
+            </div>
+        </div>
         
-        <div class="mb-4 flex flex-col sm:flex-row sm:items-center">
-            <label for="digitsToCompute" class="text-gray-700 font-medium mb-2 sm:mb-0 sm:w-40 sm:text-right sm:mr-4 whitespace-nowrap">
+        <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-100">
+            <p class="text-sm text-blue-800">
+                Compute hexadecimal digits of π using either the BBP or Bellard's formula. 
+                Both algorithms can calculate digits independently.
+            </p>
+        </div>
+        
+        <div class="mb-5 flex flex-col sm:flex-row sm:items-center">
+            <label for="digitsToCompute" class="text-gray-700 font-medium mb-2 sm:mb-0 sm:w-40 sm:mr-4 whitespace-nowrap">
                 Digits to Compute:
             </label>
-            <input 
-                type="number" 
-                id="digitsToCompute" 
-                v-model.number="digitsToCompute" 
-                min="1" 
-                class="w-full sm:w-auto sm:flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <div class="w-full max-w-md">
+                <input 
+                    type="number" 
+                    id="digitsToCompute" 
+                    v-model.number="digitsToCompute" 
+                    min="1" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
         </div>
-
-        <div class="mb-4 flex flex-col sm:flex-row sm:items-center">
-            <label for="algorithm" class="text-gray-700 font-medium mb-2 sm:mb-0 sm:w-40 sm:text-right sm:mr-4 whitespace-nowrap">
-            Algorithm:
+        <div class="mb-5 flex flex-col sm:flex-row sm:items-center">
+            <label for="algorithm" class="text-gray-700 font-medium mb-2 sm:mb-0 sm:w-40 sm:mr-4 whitespace-nowrap">
+                Algorithm:
             </label>
-            <select 
-            id="algorithm" 
-            v-model="selectedAlgorithm" 
-            class="w-full sm:w-auto sm:flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-            <option value="bbp">BBP Formula</option>
-            <option value="bellard">Bellard's Formula</option>
-            </select>
+            <div class="w-full max-w-md"> 
+                <select 
+                    id="algorithm" 
+                    v-model="selectedAlgorithm" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <option value="bbp">BBP Formula</option>
+                    <option value="bellard">Bellard's Formula</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
         </div>
         
-        <div class="flex gap-2">
+        <div class="flex gap-3 mb-2">
             <button 
-            @click="computePiDigits" 
-            :disabled="!digitsToCompute || computing"
-            class="flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400 transition duration-300"
+                @click="computePiDigits" 
+                :disabled="!digitsToCompute || computing"
+                class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 transition duration-300 flex items-center justify-center shadow-md"
             >
-            {{ computing ? 'Computing...' : 'Compute' }}
+                <i class="fas fa-calculator mr-2"></i>
+                {{ computing ? 'Computing...' : 'Compute' }}
             </button>
             <button 
-            v-if="computing && digitsToCompute > 1"
-            @click="computing = false"
-            class="w-24 bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-300"
+                v-if="computing && digitsToCompute > 1"
+                @click="computing = false"
+                class="w-24 bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-lg hover:from-red-600 hover:to-red-700 transition duration-300 flex items-center justify-center shadow-md"
             >
-            Stop
+                <i class="fas fa-stop mr-2"></i>
+                Stop
             </button>
         </div>
 
-        <div v-if="computing && digitsToCompute > 1" class="mt-4">
-            <div class="w-full bg-gray-200 rounded-full h-4">
+        <div v-if="computing && digitsToCompute > 1" class="mt-4 mb-6">
+            <div class="w-full bg-gray-200 rounded-full h-5 overflow-hidden shadow-inner">
                 <div 
-                    class="bg-blue-600 h-4 rounded-full transition-all duration-500 ease-in-out" 
+                    class="bg-gradient-to-r from-blue-400 to-blue-600 h-5 rounded-full transition-all duration-500 ease-in-out flex items-center justify-center text-xs text-white font-medium" 
                     :style="{ width: `${progressPercentage}%` }"
-                ></div>
+                >
+                    <span v-if="progressPercentage > 10">{{ progressPercentage }}%</span>
+                </div>
             </div>
-            <div class="text-center text-sm text-gray-600 mt-2">
+            <div class="text-center text-sm text-gray-600 mt-2 flex items-center justify-center">
+                <i class="fas fa-spinner fa-spin mr-2 text-blue-500"></i>
                 Computed: {{ currentProgress }} / {{ digitsToCompute }} digits
             </div>
         </div>
 
         <div v-if="piDigits.length" class="mt-6">
-            <h2 class="text-xl font-semibold mb-2 text-gray-700">Computed Digits:</h2>
-            <div class="bg-gray-50 p-4 rounded-md max-h-64 overflow-y-auto">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl font-semibold text-gray-700">Computed Digits:</h2>
+                <div class="flex gap-2 items-center">
+                    <button 
+                        v-if="collapsed"
+                        @click="collapsed = false"
+                        class="bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-lg hover:bg-gray-300 transition"
+                    >
+                        {{ 'Expand' }}
+                    </button>
+                    <button 
+                        v-if="collapsed || piDigitsTail.length > piDigitsTailMaxLength"
+                        @click="collapse"
+                        class="bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-lg hover:bg-gray-300 transition"
+                    >
+                        {{ 'Collapse' }}
+                    </button>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto border border-gray-200 shadow-inner">
                 <p class="font-mono text-sm break-all">
-                    3.{{ piDigits.join('') }}
+                    <span class="text-blue-600 font-bold">3.</span><span class="text-gray-800">{{ piDigits }}</span>
                 </p>
             </div>
+            <div class="mt-3 text-sm text-gray-500 flex justify-between">
+                <span>{{ piDigits.length }} digits computed</span>
+                <span>Algorithm: {{ selectedAlgorithm === 'bbp' ? 'BBP Formula' : 'Bellard\'s Formula' }}</span>
+            </div>
         </div>
+
     </div>
 
     <script type="module">
-    import init, { bbp } from "./pihex/pkg/pihex.js";
+    import init, { bbp, bellard } from "./pihex/pkg/pihex.js";
 
     const { createApp, ref, computed } = Vue;
 
     createApp({
         setup() {
-            const digitsToCompute = ref(100);
-            const piDigits = ref([]);
+            const digitsToCompute = ref(1000);
+
+            // TODO add explanation 
+            const piDigitsHead = ref([]);
+            const piDigitsHidden = ref([]);
+            const piDigitsTail = ref([]);
+            const piDigitsHeadMaxLength = 10;
+            const piDigitsTailMaxLength = 10;
+            const collapsed = ref(false);
+
             const computing = ref(false);
             const currentProgress = ref(0);
             const selectedAlgorithm = ref('bbp')
+
+            const displayDelay = 0;
+
+            const piDigits = computed(() => {
+
+                if (!collapsed.value) {
+                    return piDigitsHead.value.concat(piDigitsHidden.value).concat(piDigitsTail.value).join('');
+                }
+
+                return (
+                    piDigitsHead.value.join('') +
+                    ' ... ' +
+                    piDigitsHidden.value.length +
+                    ' more digits ... ' +
+                    piDigitsTail.value.join('')
+                );
+            });
 
             const progressPercentage = computed(() => {
                 return computing.value
                     ? Math.round((currentProgress.value / digitsToCompute.value) * 100) 
                     : 0;
             });
+
+            async function collapse() {
+
+                collapsed.value = true;
+
+                if (piDigitsTail.value.length > piDigitsTailMaxLength) {
+                    piDigitsHidden.value = piDigitsHidden.value.concat(piDigitsTail.value.slice(0, -piDigitsTailMaxLength));
+                    piDigitsTail.value = piDigitsTail.value.slice(-piDigitsTailMaxLength);
+                }
+
+            }
 
             async function computePiDigits() {
                 // Ensure Wasm module is initialized
@@ -115,17 +200,24 @@
                             break;
                         }
 
-                        const digit = bbp(i);
-                        piDigits.value.push(digit);
+                        const startTime = performance.now();
+                        const digit = selectedAlgorithm.value == 'bbp' ? bbp(i) : bellard(i);
+                        const computeTime = performance.now() - startTime;
+
+                        if (piDigitsHead.value.length < piDigitsHeadMaxLength) {
+                            piDigitsHead.value.push(digit);
+                        } else {
+                            piDigitsTail.value.push(digit);
+                        }
                         
                         currentProgress.value += 1;
 
-                        // Ensure progress is visible by adding a small delay
-                        await new Promise(resolve => setTimeout(resolve, 100));
+                        const delay = Math.max(0, displayDelay - computeTime);
+                        await new Promise(resolve => setTimeout(resolve, delay));
                     }
                 } catch (error) {
-                    console.error('Error computing Pi digits:', error);
-                    alert('Failed to compute Pi digits');
+                    console.error('Failed to compute digits:', error);
+                    alert('Failed to compute digits');
                 } finally {
                     computing.value = false;
                 }
@@ -138,7 +230,13 @@
                 currentProgress,
                 progressPercentage,
                 selectedAlgorithm,
-                computePiDigits
+                collapsed,
+                piDigitsHead,
+                piDigitsHidden,
+                piDigitsTail,
+                piDigitsTailMaxLength,
+                computePiDigits,
+                collapse,
             };
         }
     }).mount('#app');
