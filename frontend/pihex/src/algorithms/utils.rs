@@ -16,9 +16,7 @@ pub fn mod_pow(mut base: usize, mut exp: usize, modulus: usize) -> usize {
     result
 }
 
-
 const PI_HEX_100: &str = "243f6a8885a308d313198a2e03707344a4093822299f31d0082efa98ec4e6c89452821e638d01377be5466cf34e90c6cc0ac";
-
 
 #[allow(dead_code)] // This function is intended to be used in the test module.
 pub fn valid_hex_digit_compute_fn(f: fn(usize) -> String) {
