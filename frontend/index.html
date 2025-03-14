@@ -6,8 +6,8 @@
     <title>Pi Digits! (In Hex)</title>
     <link rel="icon" type="image/png" href="./images/pi_favicon_white.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="./styles/output.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
     <div id="app" class="bg-white shadow-xl rounded-xl p-8 w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl border border-gray-200">
@@ -224,7 +224,7 @@
                             piDigitsTail.value.push(digit);
                         }
 
-                        scrollToBottom(); // Ensure newest digit is always visible
+                        scrollToBottom(); 
                         
                         currentProgress.value += 1;
 
